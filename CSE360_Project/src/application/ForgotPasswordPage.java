@@ -10,7 +10,7 @@ public class ForgotPasswordPage extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Createing UI Components **
+        // Createing UI Components ** 
         // Title Label - shows that this is the forgot password page
         Label title = new Label("Forgot Password"); // make the label and give it text
         title.setStyle("-fx-font-size: 24px;"); // Add some style to make it stand out

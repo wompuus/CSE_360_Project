@@ -10,7 +10,7 @@ public class LoginPage extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // ** Step 1: Create UI Components **
+        // ** Step 1: Create UI Components ** 
         // Title Label - Displays the name of the app - website
         Label title = new Label("Sun Devil Book Buying Thingy");
         title.setStyle("-fx-font-size: 24px;"); // Add some style to make it stand out
