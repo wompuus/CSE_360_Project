@@ -1,9 +1,9 @@
-/CSE360_Project/
 # Ignore class files and other compiled output
 *.class
 *.jar
 *.war
 *.ear
+build.fxbuild
 
 # Ignore Eclipse project files
 /.settings/
