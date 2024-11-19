@@ -1,5 +1,10 @@
 package application;
 	
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -32,14 +37,19 @@ public class LoginPage extends Application {
 
         // Hyperlink for the "Forgot Password?" option
         Hyperlink forgotPasswordLink = new Hyperlink("Forgot Password?");
+        
+        // HyperLink to register if you haven't already
+        Hyperlink registerLink = new Hyperlink("Register");
+        
 
         // ** Step 2: Set up Layout (VBox) **
         // VBox organizes the components vertically with 10px spacing
-        VBox layout = new VBox(10, title, asuIdField, passwordField, loginButton, errorLabel, forgotPasswordLink);
+        VBox layout = new VBox(10, title, asuIdField, passwordField, loginButton, errorLabel, forgotPasswordLink, registerLink);
         layout.setStyle("-fx-alignment: center; -fx-padding: 20;"); // Center-align components and add padding
 
         // ** Step 3: Add Event Handlers **
         // Handle the login button click event
+        // Now we take away the fixed validateLogin features and merge it with the database. 
         loginButton.setOnAction(e -> {
             String asuId = asuIdField.getText();        // Get the ASU ID from the text field
             String password = passwordField.getText();  // Get the password from the password field
@@ -60,6 +70,11 @@ public class LoginPage extends Application {
             forgotPasswordPage.start(primaryStage); // Transition to the Forgot Password page
         });
 
+        registerLink.setOnAction(e -> {
+        	RegisterPage registerPage = new RegisterPage();
+        	registerPage.start(primaryStage);
+        });
+        
         // ** Step 4: Set up and Show Scene **
         // Create a Scene with the layout (VBox) and set the window size
         Scene loginScene = new Scene(layout, 400, 300);
@@ -72,7 +87,27 @@ public class LoginPage extends Application {
     // This is where we need to connect to our database, if we do a text document, we should do it in dictionary style? maybe map and key? 
     private boolean validateLogin(String asuId, String password) {
         // Simple hardcoded validation
-        return "123456".equals(asuId) && "password".equals(password);
+        // return "123456".equals(asuId) && "password".equals(password); // removing hard coded logins and merge it with the database
+    	String query = "SELECT * FROM Users WHERE asu_id = ? AND password = ?";
+    	try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+    		//a PreparedStatement is pre-compiled SQL statement, these objects have some useful additional features. when PreparedStatement is created, the SQL query is passed
+    		// as a parameter. This prepared statement contains a pre-compiled SQL query, so when the PreparedStatement is executed, database management can just 
+    		// run the query instead of first compiling it. ~~ https://www.geeksforgeeks.org/how-to-use-preparedstatement-in-java/ ~~ 
+    		stmt.setString(1, asuId);
+    		stmt.setString(2, password);
+    		
+    		try (ResultSet rs = stmt.executeQuery()) {
+    			return rs.next(); // this means that a record is found and that the login was successful
+    		}
+    		catch (Exception e) {
+    			e.printStackTrace();
+    			return false;
+    		}
+    	} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return false;
+		}
     }
     public static void main(String[] args) {
         launch(args); // This launches the JavaFX application, starting with LoginPage
