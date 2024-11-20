@@ -29,6 +29,16 @@ public class DatabaseSetup {
                 );
                 """;
 
+        String createCartTable = """
+        		CREATE TABLE IF NOT EXISTS Cart (
+        		id INTEGER PRIMARY KEY AUTOINCREMENT,
+        		book_id INTERGER NOT NULL,
+        		buyer_id INTEGER NOT NULL,
+        		FOREIGN KEY (book_id) REFERENCES Books(id) ON DELETE CASCADE,
+        		FOREIGN KEY (buyer_id) REFERENCES Users(id) ON DELETE CASCADE
+        		);
+        		""";
+        
         String createTransactionsTable = """
                 CREATE TABLE IF NOT EXISTS Transactions (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,6 +58,7 @@ public class DatabaseSetup {
             stmt.execute(createUsersTable);
             stmt.execute(createBooksTable);
             stmt.execute(createTransactionsTable);
+            stmt.execute(createCartTable);
             System.out.println("Database setup complete.");
         } catch (Exception e) {
             e.printStackTrace();

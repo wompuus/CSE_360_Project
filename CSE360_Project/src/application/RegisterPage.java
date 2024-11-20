@@ -24,7 +24,7 @@ public class RegisterPage extends Application {
 		passwordField.setPromptText("Password");
 		
 		ComboBox<String> roleComboBox = new ComboBox<>();
-		roleComboBox.getItems().addAll("buyer", "admin");
+		roleComboBox.getItems().addAll("buyer", "seller", "admin");
 		roleComboBox.setPromptText("Select Role(s)");
 		
 		TextField emailField = new TextField();
