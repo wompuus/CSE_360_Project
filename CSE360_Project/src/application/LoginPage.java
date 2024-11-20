@@ -107,6 +107,9 @@ public class LoginPage extends Application {
     		
     		try (ResultSet rs = stmt.executeQuery()) {
     			if(rs.next()) {
+    				// Added in a currentUser to save this so we can implement the cart page and link the book ID and the user ID
+    				CurrentUser.setId(rs.getInt("id"));
+    				CurrentUser.setRole(rs.getString("role"));
     				// this means that a record is found and that the login was successful
     				return rs.getString("role");
     			}
