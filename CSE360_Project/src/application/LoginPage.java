@@ -53,14 +53,23 @@ public class LoginPage extends Application {
         loginButton.setOnAction(e -> {
             String asuId = asuIdField.getText();        // Get the ASU ID from the text field
             String password = passwordField.getText();  // Get the password from the password field
-
-            if (validateLogin(asuId, password)) {
-                // If login is successful, clear error message
-                errorLabel.setText("Login successful!"); // need to set this to null, just easier than reading console
-                System.out.println("Login successful!"); // For now, just print a message
+            String role = validateLogin(asuId, password);
+            
+            if (role != null) {
+            	errorLabel.setText("Login Successful!");
+            	switch(role) {
+            	case	"buyer":
+            		new BuyerPage().start(primaryStage);
+            		break;
+            	case	"seller":
+            		new SellerPage().start(primaryStage);
+            		break;
+            	case	"admin":
+            		new AdminPage().start(primaryStage);
+            		break;
+            	}
             } else {
-                // Display error message if login fails
-                errorLabel.setText("Incorrect username and/or password");
+            	errorLabel.setText("Incorrect username and/or password!");
             }
         });
 
@@ -85,7 +94,7 @@ public class LoginPage extends Application {
 
     // ** Helper method to validate login credentials **
     // This is where we need to connect to our database, if we do a text document, we should do it in dictionary style? maybe map and key? 
-    private boolean validateLogin(String asuId, String password) {
+    private String validateLogin(String asuId, String password) {
         // Simple hardcoded validation
         // return "123456".equals(asuId) && "password".equals(password); // removing hard coded logins and merge it with the database
     	String query = "SELECT * FROM Users WHERE asu_id = ? AND password = ?";
@@ -97,18 +106,26 @@ public class LoginPage extends Application {
     		stmt.setString(2, password);
     		
     		try (ResultSet rs = stmt.executeQuery()) {
-    			return rs.next(); // this means that a record is found and that the login was successful
+    			if(rs.next()) {
+    				// this means that a record is found and that the login was successful
+    				return rs.getString("role");
+    			}
     		}
     		catch (Exception e) {
     			e.printStackTrace();
-    			return false;
+    			//return null;
     		}
     	} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			return false;
+			//return null;
 		}
+    	return null;
     }
+    
+    
+    
+    
     public static void main(String[] args) {
         launch(args); // This launches the JavaFX application, starting with LoginPage
     }
