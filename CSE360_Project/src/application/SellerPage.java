@@ -61,11 +61,7 @@ public class SellerPage extends Application {
         navBar.getChildren().addAll(logOutButton, buyerSellerToggle, myAccountButton);
 
         // Event handler for the "Log Out" button
-        logOutButton.setOnAction(e -> {
-            LoginPage loginPage = new LoginPage();  // Launch LoginPage
-            loginPage.start(primaryStage);  // Close the current SellerPage
-            primaryStage.close();
-        });
+        logOutButton.setOnAction(e-> new LoginPage().start(primaryStage));
 
         // Event handler for the "My Account" button
         myAccountButton.setOnAction(e -> {
