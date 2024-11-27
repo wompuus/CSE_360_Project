@@ -41,6 +41,11 @@ public class BuyerPage extends Application {
 		Button cartButton = new Button("Cart");
 		navBar.getChildren().addAll(homeButton, myAccountButton, orderHistoryButton, buyerSellerToggle, cartButton);
 		
+		
+		cartButton.setOnAction(e-> {
+			new CartPage().start(primaryStage);
+		});
+		
 		// Search Bar!
 		HBox searchBar = new HBox(10);
 		TextField searchField = new TextField();

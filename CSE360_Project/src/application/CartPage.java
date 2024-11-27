@@ -10,200 +10,196 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.scene.layout.GridPane;
 
 public class CartPage extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        HBox titleBar = new HBox();
-        titleBar.setStyle("-fx-background-color: red; -fx-padding: 10;");
+    	HBox titleBar = new HBox();
+    	titleBar.setStyle("-fx-background-color: red; -fx-padding: 10;");
 
-        Text titleText = new Text("SunDevil Book Buying Website");
-        titleText.setFill(Color.WHITE);  // White text color
-        titleText.setFont(new Font(50));  // Increased font size for a taller title
+    	Text titleText = new Text("SunDevil Book Buying Website");
+    	titleText.setFill(Color.WHITE);
+    	titleText.setFont(new Font(50));
+    	titleBar.getChildren().add(titleText);
 
-        titleBar.getChildren().add(titleText);
+    		// Top Navbar
+    	HBox navBar = new HBox(20);
+    	navBar.setPadding(new Insets(15, 20, 15, 20));
+    	navBar.setStyle("-fx-background-color: white; -fx-min-height: 60px;");
+    	navBar.setAlignment(Pos.CENTER_LEFT);
 
-        // Step 1: Add in the top navbar with white background
-        HBox navBar = new HBox(20);
-        navBar.setPadding(new Insets(15, 20, 15, 20));  // Padding around navbar
-        navBar.setStyle("-fx-background-color: white; -fx-min-height: 60px;");
-        navBar.setAlignment(Pos.CENTER_LEFT);
+    	Button logOutButton = new Button("Log Out");
+    	Button myAccountButton = new Button("My Account");
+    	Button mainPageButton = new Button("Main Page");
 
-        Button logOutButton = new Button("Log Out");
-        Button myAccountButton = new Button("My Account");
-        Button mainPageButton = new Button("Main Page");
+    	ToggleButton buyerSellerToggle = new ToggleButton("BUYER");
+    	buyerSellerToggle.setSelected(true);
+    	buyerSellerToggle.setDisable(true);
 
-        ToggleButton buyerSellerToggle = new ToggleButton("BUYER");
-        buyerSellerToggle.setSelected(true);
-        buyerSellerToggle.setDisable(true);
+    	navBar.getChildren().addAll(logOutButton, buyerSellerToggle, myAccountButton, mainPageButton);
 
-        logOutButton.setMinHeight(40);
-        buyerSellerToggle.setMinHeight(40);
-        myAccountButton.setMinHeight(40);
-        mainPageButton.setMinHeight(40);
+    	// Event Handlers for Navbar Buttons
+    	logOutButton.setOnAction(e -> new LoginPage().start(primaryStage));
+    	mainPageButton.setOnAction(e -> new BuyerPage().start(primaryStage));
+    	myAccountButton.setOnAction(e -> {
+    		// Open My Account (not implemented yet)
+    		primaryStage.close();
+    	});
 
+    	// Book Listings
+    	VBox bookList = new VBox(10);
+    	bookList.setPadding(new Insets(10));
+    	ScrollPane bookScrollPane = new ScrollPane(bookList);
+    	bookScrollPane.setFitToWidth(true);
 
-        logOutButton.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-        buyerSellerToggle.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-        myAccountButton.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-        mainPageButton.setStyle("-fx-border-color: black; -fx-border-width: 2px;");
-
-        navBar.getChildren().addAll(logOutButton, buyerSellerToggle, myAccountButton, mainPageButton);
-
-        // Event handler for the "Log Out" button
-        logOutButton.setOnAction(e-> new LoginPage().start(primaryStage));
-
-        // Event handler for the "My Account" button
-        myAccountButton.setOnAction(e -> {
-            //CurrentUser.openCurrentUserPage();  // Open the CurrentUser page
-            primaryStage.close();  // Close the current Cart window
-        });
-        // Event handler for the "Main Page" button
-        mainPageButton.setOnAction(e -> new BuyerPage().start(primaryStage));
-
-
-        // Layout for the book selling form
-        VBox whiteBox = new VBox(20);
-        whiteBox.setStyle("-fx-background-color: white; -fx-padding: 40px;");
-        whiteBox.setVgrow(whiteBox, Priority.ALWAYS);
-
-        VBox rectanglesColumn = new VBox(20);
-        rectanglesColumn.setAlignment(Pos.CENTER);
-        rectanglesColumn.setPadding(new Insets(20));
-
-        // Rectangles for book info
-        VBox rect1Content = new VBox(10);
-        rect1Content.setStyle("-fx-background-color: gray; -fx-min-width: 200px; -fx-padding: 15px;");
-        rect1Content.setAlignment(Pos.CENTER_LEFT);
-
-        Text rect1Text = new Text("Shopping Cart");
-        rect1Text.setFont(new Font(14));
-        rect1Text.setFill(Color.WHITE);
-
-        // Call the method to get the book
-        int bookID = 1; // should be passed along from when the cart is
-        String[] book = getBook(bookID); // sample of getting the book from database
-
-
-        // GRIDPANE FOR CART LISTINGS: EDIT ONCE DATABASE IS SETUP
-
-        Text itemNumber = new Text("1"); //internal count for books in cart
-
-
-
-        Text bookTitle = new Text(book[0]);
-        Text author = new Text(book[1]);
-        Text date = new Text(book[2]);
-        Text condition = new Text(book[3]);
-        Text bookType = new Text(book[4]);
-        Text price = new Text(book[5]);
-        Text uniqueBookID = new Text(book[6]);
-        Text sellerID = new Text(book[7]);
-
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER_LEFT);
-        grid.setStyle("-fx-background-color: gray; -fx-min-width: 200px; -fx-padding: 15px;");
-        grid.setMinSize(100, 100);
-        grid.setPadding(new Insets(20, 20, 20, 20));
-        grid.setVgap(10);
-        grid.setHgap(60);
-
-
-        grid.add(bookTitle, 0, 0);
-        grid.add(author, 1, 0);
-        grid.add(date, 2, 0);
-        grid.add(condition, 3, 0);
-        grid.add(bookType, 4, 0);
-        grid.add(price, 5, 0);
-
-
-        GridPane grid1 = new GridPane();
-        grid1.setAlignment(Pos.CENTER_LEFT);
-        grid1.setStyle("-fx-background-color: lightgray; -fx-min-width: 200px; -fx-padding: 15px;");
-        grid1.setMinSize(100, 100);
-        grid1.setPadding(new Insets(20, 20, 20, 20));
-        grid1.setVgap(10);
-        grid1.setHgap(60);
-
-
-        grid1.add(bookTitle, 0, 0);
-        grid1.add(author, 1, 0);
-        grid1.add(date, 2, 0);
-        grid1.add(condition, 3, 0);
-        grid1.add(bookType, 4, 0);
-        grid1.add(price, 5, 0);
-
-
-
-
-        // Buy Button
-        Button BuyButton = new Button("Buy");
+    	populateCart(bookList);
+    	
+    	Button BuyButton = new Button("Buy");
         BuyButton.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-padding: 10px; -fx-border-color: black; -fx-border-width: 2px;");
         BuyButton.setMinWidth(200);
-
+        
         BuyButton.setOnAction(e -> {
-            try {
-                // Show success alert
+            if (purchaseBooks()) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Success");
-                alert.setHeaderText("Book Purchased");
-                alert.setContentText("The book has been purchased successfully!");
+                alert.setHeaderText("Books Purchased");
+                alert.setContentText("Your purchase was successful!");
                 alert.showAndWait();
-
-
-            } catch (Exception ex) { //error message if book is not available for purchased
-                // Catch other exceptions (e.g., database issues)
-                ex.printStackTrace();
+                populateCart(bookList); // Refresh the cart after purchase
+            } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
-                alert.setHeaderText("Unable to buy the book");
-                alert.setContentText("Please try again later.");
+                alert.setHeaderText("Purchase Failed");
+                alert.setContentText("Unable to complete your purchase. Please try again.");
                 alert.showAndWait();
             }
         });
 
-        // Add all UI components to the VBox
-        whiteBox.getChildren().add(grid);
-        whiteBox.getChildren().add(grid1);
-        whiteBox.getChildren().addAll(rectanglesColumn, BuyButton);
+    	// Main Layout
+    	VBox mainLayout = new VBox(20);
+    	mainLayout.getChildren().addAll(titleBar, navBar, bookScrollPane, BuyButton);
 
-        VBox mainLayout = new VBox(20);
-        mainLayout.getChildren().addAll(titleBar, navBar, whiteBox);
+    	Scene scene = new Scene(mainLayout, 450,450);
+    	primaryStage.setTitle("Shopping Cart");
+    	primaryStage.setScene(scene);
+    	primaryStage.show();
+    	}
 
+    private void populateCart(VBox bookList) {
+    	bookList.getChildren().clear();
+    		// SQL query to fetch cart items for the active user
+    	String query = """
+    			SELECT b.title, b.author, b.published_year, b.condition, b.price, b.id
+    			FROM Cart c
+    			JOIN Books b ON c.book_id = b.id
+    			WHERE c.buyer_id = ?
+    			""";
+    	try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+    		// need to use the active user's ID
+    		stmt.setInt(1, CurrentUser.getId());
+    		ResultSet rs = stmt.executeQuery();
 
-        // Set up the stage
-        Scene scene = new Scene(mainLayout, 800, 600);
-        primaryStage.setTitle("Shopping Cart");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    		while (rs.next()) {
+    			String title = rs.getString("title");
+    			String author = rs.getString("author");
+    			int year = rs.getInt("published_year");
+    			String condition = rs.getString("condition");
+    			double price = rs.getDouble("price");
+    			int bookId = rs.getInt("id");
 
+// ----------------- Now to add the item to the book list
+    			HBox bookItem = createBookItem(title, author, year, condition, price, bookId);
+    			bookList.getChildren().add(bookItem);
+    			}
 
+// --------------- If no items are in the cart, display a message
+    		if (bookList.getChildren().isEmpty()) {
+    			Label noBooksLabel = new Label("Your cart is empty.");
+    			noBooksLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: grey;");
+    			bookList.getChildren().add(noBooksLabel);
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
     }
 
-    public String[] getBook(int id) {
-        // Database logic to insert the book details
+    private HBox createBookItem(String title, String author, int year, String condition, double price, int bookId) {
+    	Label bookDetails = new Label(String.format("%s\nAuthor: %s | Published: %d\nCondition: %s", title, author, year, condition));
+    	bookDetails.setStyle("-fx-font-size: 14px");
+    	Label bookPrice = new Label(String.format("$%.2f", price));
+    	bookPrice.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
+    	Button removeButton = new Button("Remove");
+    	removeButton.setOnAction(e -> {
+    	
+    	if (removeFromCart(bookId)) {
+    		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    		alert.setTitle("Success");
+    		alert.setHeaderText("Book Removed");
+    		alert.setContentText("The book has been removed from your cart.");
+    		alert.showAndWait();
+    		populateCart((VBox) bookDetails.getParent().getParent());
+    		} else {
+    			Alert alert = new Alert(Alert.AlertType.ERROR);
+    			alert.setTitle("Error");
+    			alert.setHeaderText("Removal Failed");
+    			alert.setContentText("Unable to remove the book. Please try again.");
+                alert.showAndWait();
+                }
+    	});
 
-        String[] newBook;//  = new String[8];//8 items for: 0-title, 1-author, 2-date,3-condition, 4-book type,
-        //5-price, 6-bookId, 7- sellerID
+    	HBox bookItem = new HBox(10, bookDetails, bookPrice, removeButton);
+    	bookItem.setPadding(new Insets(10));
+    	bookItem.setStyle("-fx-border-color: lightgray; -fx-border-radius: 5px; -fx-background-radius: 5px; -fx-background-color: #f9f9f9;");
+    	return bookItem;
+    	}
 
+    private boolean removeFromCart(int bookId) {
+    	String query = "DELETE FROM Cart WHERE book_id = ? AND buyer_id = ?";
 
-        newBook = new String[]{"Cook Book", "Mary Something", "10/20/2020", "New", "Science", "$100", "1", "1"};
-        System.out.println("Book with id: " + id + " has been added to the cart");
-
-        return newBook;
+    	try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+    		stmt.setInt(1, bookId);
+    		stmt.setInt(2, CurrentUser.getId());
+    		stmt.executeUpdate();
+    		return true;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return false;
+    	}
     }
 
+    private boolean purchaseBooks() {
+    	String removeBooksQuery = "DELETE FROM Books WHERE id IN (SELECT book_id FROM Cart WHERE buyer_id = ?)";
+    	String clearCartQuery = "DELETE FROM Cart WHERE buyer_id = ?";
+    	try (Connection conn = DatabaseConnection.getConnection()) {
+    		conn.setAutoCommit(false); 
+
+    		try (PreparedStatement removeBooksStmt = conn.prepareStatement(removeBooksQuery); PreparedStatement clearCartStmt = conn.prepareStatement(clearCartQuery)) {
+    			removeBooksStmt.setInt(1, CurrentUser.getId());
+    			clearCartStmt.setInt(1, CurrentUser.getId());
+    			removeBooksStmt.executeUpdate();
+    			clearCartStmt.executeUpdate();
+    			conn.commit(); // Commit transaction
+    			return true;
+    		} catch (Exception e) {
+    			conn.rollback(); // Rollback transaction on failure
+    			e.printStackTrace();
+    			return false;
+    			}
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    			return false;
+    		}
+    }
+    
+    
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
-
 }

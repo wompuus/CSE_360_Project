@@ -11,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -65,8 +66,8 @@ public class SellerPage extends Application {
 
         // Event handler for the "My Account" button
         myAccountButton.setOnAction(e -> {
-            CurrentUser.openCurrentUserPage();  // Open the CurrentUser page
-            primaryStage.close();  // Close the current SellerPage window
+            //CurrentUser.openCurrentUserPage();  // Open the CurrentUser page
+           // primaryStage.close();  // Close the current SellerPage window
         });
 
         // Layout for the book selling form
@@ -170,6 +171,7 @@ public class SellerPage extends Application {
         Button listItButton = new Button("List It");
         listItButton.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-padding: 10px; -fx-border-color: black; -fx-border-width: 2px;");
         listItButton.setMinWidth(200);
+        
 
         listItButton.setOnAction(e -> {
             try {
@@ -205,7 +207,7 @@ public class SellerPage extends Application {
                 int bookId = random.nextInt(1000) + 1;
 
                 // Call the method to list the book
-                listBook(bookId, title, author, datePublished, bookType, condition, price, 1); // Assume sellerId = 1 for now
+                listBook(bookId, title, author, datePublished, bookType, condition, price, CurrentUser.getId()); // Assume sellerId = 1 for now
 
                 // Show success alert
                 Alert alert = new Alert(AlertType.INFORMATION);
@@ -243,11 +245,18 @@ public class SellerPage extends Application {
                 alert.showAndWait();
             }
         });
+        
+        
+        
 
         // Add all UI components to the VBox
         whiteBox.getChildren().addAll(rectanglesColumn, listItButton);
         VBox mainLayout = new VBox(20);
-        mainLayout.getChildren().addAll(titleBar, navBar, whiteBox);
+        ScrollPane bookScrollPane = new ScrollPane(whiteBox);
+		bookScrollPane.setFitToWidth(true);
+
+
+        mainLayout.getChildren().addAll(titleBar, navBar, bookScrollPane);
 
         // Set up the stage
         Scene scene = new Scene(mainLayout, 800, 600);
@@ -258,8 +267,31 @@ public class SellerPage extends Application {
 
     // Method to list the book in the database (dummy method for now)
     public void listBook(int id, String title, String author, String datePublished, String bookType, String condition, String price, int sellerId) {
-        // Database logic to insert the book details
-        System.out.println("Book listed: " + title + " by " + author);
+        String query = """
+        		INSERT INTO Books (id, title, author, published_year, category, condition, price, seller_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        		""";
+        
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+        	stmt.setInt(1, id);
+        	stmt.setString(2, title);
+        	stmt.setString(3, author);
+        	stmt.setString(4, datePublished);
+        	stmt.setString(5, bookType);
+        	stmt.setString(6, condition);
+        	stmt.setDouble(7, Double.parseDouble(price));
+        	stmt.setInt(8,sellerId);
+        	
+        	stmt.executeUpdate();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Success!");
+            alert.setHeaderText("The book has been sold");
+            alert.setContentText("Thank you for your contribution.");
+            alert.showAndWait();
+        } catch (SQLException event) {
+        	event.printStackTrace();
+        	throw new RuntimeException ("Failed to list the book");
+        }
+        
     }
 
     public static void main(String[] args) {
